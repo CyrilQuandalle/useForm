@@ -38,8 +38,8 @@ export const useForm = (stateSchema, submit) => {
     setFormInError(isInerror)
   }
 
-  const handleReset = () => {
-    setState(stateSchema)
+  const handleReset = (schema = stateSchema) => {
+    setState(schema)
     setFormInError(false)
     setIsSubmitting(false)
   }
