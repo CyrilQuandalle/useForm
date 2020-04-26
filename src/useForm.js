@@ -6,55 +6,108 @@ export const useForm = (stateSchema, submit) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [pristineState, setPristineState] = useState({})
 
-  const handleChange = ({ target: { value, name, type, checked } }) => {
+  const handleChange = ({ target: { value, name, type, checked } }, formName) => {
     value = type === 'checkbox' ? checked : value
-    setState(prevState => ({
-      ...prevState,
-      [name]: { ...state[name], value },
-    }))
+    if (formName) {
+      setState(prevState => ({
+        ...prevState,
+        [formName]: { ...state[formName], [name]: { ...state[formName][name], value } }
+      }))
+    } else {
+      setState(prevState => ({
+        ...prevState,
+        [name]: { ...state[name], value }
+      }))
+    }
   }
 
-  const setFormField = (value, name) => {
-    setState(prevState => ({
-      ...prevState,
-      [name]: { ...state[name], value },
-    }))
+  const setFormField = (value, name, formName) => {
+    if (formName) {
+      setState(prevState => ({
+        ...prevState,
+        [formName]: { ...state[formName], [name]: { ...state[formName][name], value } }
+      }))
+    } else {
+      setState(prevState => ({
+        ...prevState,
+        [name]: { ...state[name], value }
+      }))
+    }
   }
 
-  const setErrorField = (error, name) => {
-    setState(prevState => ({
-      ...prevState,
-      [name]: { ...state[name], error },
-    }))
+  const setErrorField = (error, name, formName) => {
+    if (formName) {
+      setState(prevState => ({
+        ...prevState,
+        [formName]: { ...state[formName], [name]: { ...state[formName][name], error } }
+      }))
+    } else {
+      setState(prevState => ({
+        ...prevState,
+        [name]: { ...state[name], error }
+      }))
+    }
   }
 
-  const onValidate = ({ target: { name } }) => {
-    setState(prevState => ({
-      ...prevState,
-      [name]: { ...state[name], error: getErrorMessage(state, name) },
-    }))
-  }
-
-  const isFormEmpty = required => {
-    let isEmpty = true
-    for (const field in state) {
-      if (required) {
-        if (state[field].required && state[field].value) {
-          isEmpty = false
+  const onValidate = ({ target: { name } }, formName) => {
+    if (formName) {
+      setState(prevState => ({
+        ...prevState,
+        [formName]: {
+          ...prevState[formName],
+          [name]: { ...state[formName][name], error: getErrorMessage(state[formName], name) }
         }
-      } else {
-        if (state[field].value) {
-          isEmpty = false
+      }))
+    } else {
+      setState(prevState => ({
+        ...prevState,
+        [name]: { ...state[name], error: getErrorMessage(state, name) }
+      }))
+    }
+  }
+
+  const isFormEmpty = (required, formName) => {
+    let isEmpty = true
+    if (formName) {
+      for (const field in state[formName]) {
+        if (required) {
+          if (state[formName][field].required && state[formName][field].value) {
+            isEmpty = false
+          }
+        } else {
+          if (state[formName][field].value) {
+            isEmpty = false
+          }
+        }
+      }
+    } else {
+      for (const field in state) {
+        if (required) {
+          if (state[field].required && state[field].value) {
+            isEmpty = false
+          }
+        } else {
+          if (state[field].value) {
+            isEmpty = false
+          }
         }
       }
     }
     return isEmpty
   }
 
-  const isPristine = () => {
-    for (const field in pristineState) {
-      if (pristineState[field].value !== state[field].value) {
-        return false
+  const isPristine = formName => {
+    if (formName) {
+      for (const field in pristineState[formName]) {
+        if (pristineState[formName][field].value !== state[formName][field].value) {
+          return false
+        }
+      }
+    } else {
+      for (const field in pristineState) {
+        if (pristineState[field].value !== state[field].value) {
+          return false
+        }
       }
     }
     return true
@@ -65,22 +118,39 @@ export const useForm = (stateSchema, submit) => {
     setPristineState(state)
   }
 
-  const validateAllFields = () => {
+  const validateAllFields = formName => {
     let isInerror = false
-    for (const fieldName of Object.keys(stateSchema)) {
-      onValidate({ target: { name: fieldName } })
-      if (getErrorMessage(state, fieldName)) {
-        isInerror = true
+    if (formName) {
+      for (const fieldName of Object.keys(stateSchema[formName])) {
+        onValidate({ target: { name: fieldName } }, formName)
+        if (getErrorMessage(state[formName], fieldName)) {
+          isInerror = true
+        }
+      }
+    } else {
+      for (const fieldName of Object.keys(stateSchema)) {
+        onValidate({ target: { name: fieldName } })
+        if (getErrorMessage(state, fieldName)) {
+          isInerror = true
+        }
       }
     }
     setFormInError(isInerror)
   }
 
-  const isFormInerror = () => {
+  const isFormInerror = formName => {
     let isInerror = false
-    for (const fieldName of Object.keys(stateSchema)) {
-      if (getErrorMessage(state, fieldName)) {
-        isInerror = true
+    if (formName) {
+      for (const fieldName of Object.keys(stateSchema[formName])) {
+        if (getErrorMessage(state[formName], fieldName)) {
+          isInerror = true
+        }
+      }
+    } else {
+      for (const fieldName of Object.keys(stateSchema)) {
+        if (getErrorMessage(state, fieldName)) {
+          isInerror = true
+        }
       }
     }
     return isInerror
@@ -92,9 +162,11 @@ export const useForm = (stateSchema, submit) => {
     setIsSubmitting(false)
   }
 
-  const handleSubmit = e => {
+  const handleSubmit = (e, formName) => {
     if (e) e.preventDefault()
-    validateAllFields()
+    if (!formName) {
+      validateAllFields()
+    }
     setIsSubmitting(true)
   }
 
@@ -104,9 +176,7 @@ export const useForm = (stateSchema, submit) => {
         try {
           await submit()
         } catch (e) {
-          console.error(
-            "Une erreur s'est produite lors de la soumission du formulaire"
-          )
+          console.error("Une erreur s'est produite lors de la soumission du formulaire")
         } finally {
           setIsSubmitting(false)
         }
@@ -129,32 +199,44 @@ export const useForm = (stateSchema, submit) => {
     setState,
     isFormInerror,
     setInitialState,
-    isPristine,
+    isPristine
   }
 }
 
-const getErrorMessage = (state, name) => {
-  if (state[name].required && !state[name].value) {
-    if (state[name].requiredError) {
-      return state[name].requiredError
+const getErrorMessage = (passedState, name) => {
+  if (
+    passedState[name].required &&
+    passedState[name].dependsOn &&
+    passedState[passedState[name].dependsOn].value &&
+    !passedState[name].value
+  ) {
+    if (passedState[name].requiredError) {
+      return passedState[name].requiredError
     }
     return 'Champ requis'
   }
 
-  if (state[name].required && state[name].value) {
+  if (!passedState[name].dependsOn && passedState[name].required && !passedState[name].value) {
+    if (passedState[name].requiredError) {
+      return passedState[name].requiredError
+    }
+    return 'Champ requis'
+  }
+
+  if (passedState[name].required && passedState[name].value) {
     if (
-      state[name].validator &&
-      !state[name].value.match(state[name].validator.regEx)
+      passedState[name].validator &&
+      !passedState[name].value.match(passedState[name].validator.regEx)
     ) {
-      return state[name].validator.error
+      return passedState[name].validator.error
     }
   }
   if (
-    state[name].value &&
-    state[name].validator &&
-    !state[name].value.match(state[name].validator.regEx)
+    passedState[name].value &&
+    passedState[name].validator &&
+    !passedState[name].value.match(passedState[name].validator.regEx)
   ) {
-    return state[name].validator.error
+    return passedState[name].validator.error
   }
 
   return ''
