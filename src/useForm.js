@@ -11,7 +11,7 @@ export const useForm = (stateSchema, submit) => {
     if (formName) {
       setState(prevState => ({
         ...prevState,
-        [formName]: { ...state[formName], [name]: { ...state[formName][name], value } }
+        [formName]: { ...prevState[formName], [name]: { ...state[formName][name], value } }
       }))
     } else {
       setState(prevState => ({
@@ -25,7 +25,7 @@ export const useForm = (stateSchema, submit) => {
     if (formName) {
       setState(prevState => ({
         ...prevState,
-        [formName]: { ...state[formName], [name]: { ...state[formName][name], value } }
+        [formName]: { ...prevState[formName], [name]: { ...state[formName][name], value } }
       }))
     } else {
       setState(prevState => ({
@@ -39,7 +39,7 @@ export const useForm = (stateSchema, submit) => {
     if (formName) {
       setState(prevState => ({
         ...prevState,
-        [formName]: { ...state[formName], [name]: { ...state[formName][name], error } }
+        [formName]: { ...prevState[formName], [name]: { ...state[formName][name], error } }
       }))
     } else {
       setState(prevState => ({
