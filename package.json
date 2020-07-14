@@ -1,0 +1,26 @@
+{
+  "name": "useform",
+  "version": "1.0.0",
+  "description": "simple react validation hook",
+  "main": "src/useForm.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CyrilQuandalle/useForm.git"
+  },
+  "peerDependencies": {
+    "react": "^16.13.1"
+  },
+  "keywords": [
+    "form",
+    "validation"
+  ],
+  "author": "cyril quandalle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CyrilQuandalle/useForm/issues"
+  },
+  "homepage": "https://github.com/CyrilQuandalle/useForm#readme"
+}
