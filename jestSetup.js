@@ -1,11 +1,10 @@
-import '@testing-library/jest-dom/extend-expect';
-
-const originalError = console.error;
+const originalError = console.error
 beforeAll(() => {
-    originalError.call(console, ...args);
+  console.error = (...args) => {
+    originalError.call(console, ...args)
   }
 })
 
 afterAll(() => {
-  console.error = originalError;
-});
+  console.error = originalError
+})
