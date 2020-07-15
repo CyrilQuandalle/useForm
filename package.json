@@ -4,7 +4,9 @@
   "description": "simple react validation hook",
   "main": "src/useForm.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "watch": "jest --watch",
+    "coverage:all": "jest --coverage"
   },
   "repository": {
     "type": "git",
