@@ -1,0 +1,29 @@
+{
+    "parser": "babel-eslint",
+    "extends": [
+      "standard",
+      "plugin:react/recommended"
+    ],
+    "rules": {
+      "react/no-unused-prop-types": 2,
+      "space-before-function-paren": 0,
+      "semi": [2, "always"],
+      "prettier/prettier": "error"
+    },
+    "plugins": [
+      "babel",
+      "standard",
+      "promise",
+      "jest",
+      "prettier"
+    ],
+    "env": {
+      "jest/globals": true
+    },
+    "settings": {
+      "react": {
+        "version": "16.0"
+      }
+    }
+  }
+  
