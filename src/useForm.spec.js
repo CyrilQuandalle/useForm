@@ -125,4 +125,24 @@ describe('useForm', () => {
 
     expect(result.current.state.email.error).toEqual('')
   })
+
+  it('shoud indicate the form is empty', () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: '', required: true, error: '' },
+        email: {
+          value: '',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    expect(result.current.isFormEmpty()).toBeTruthy()
+  })
 })
