@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "watch": "jest --watch",
-    "coverage:all": "jest --coverage"
+    "coverage": "jest --coverage"
   },
   "repository": {
     "type": "git",

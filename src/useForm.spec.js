@@ -24,7 +24,7 @@ describe('useForm', () => {
     expect(result.current.state.myField.value).toEqual('newValue')
   })
 
-  it('should display an error if the field is required and empty', () => {
+  it('should display the default error if the field is required and empty with no requiredError key', () => {
     const { result } = renderHook(() =>
       useForm({ myField: { value: '', required: true, error: '' } })
     )
@@ -33,6 +33,29 @@ describe('useForm', () => {
     })
 
     expect(result.current.state.myField.error).toEqual('Champ requis')
+  })
+  it('should display a custom error if the field is required and empty with a requiredError key', () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: '', required: true, requiredError: 'customError', error: '' }
+      })
+    )
+    act(() => {
+      result.current.onValidate({ target: { name: 'myField' } })
+    })
+
+    expect(result.current.state.myField.error).toEqual('customError')
+  })
+
+  it('should indicate if the form is in error', () => {
+    const { result } = renderHook(() =>
+      useForm({ myField: { value: '', required: true, error: '' } })
+    )
+    act(() => {
+      result.current.onValidate({ target: { name: 'myField' } })
+    })
+
+    expect(result.current.isFormInerror()).toBeTruthy()
   })
 
   it('should display a custom error for field with custom validation and wrong value', () => {
