@@ -229,6 +229,78 @@ describe('useForm', () => {
     expect(result.current.isFormEmpty(true)).toBeTruthy()
   })
 
+  it('should indicate that the prefilled form has been touched by the user', async () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: 'field', required: true, error: '' },
+        email: {
+          value: 'mail',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    result.current.setInitialState({
+      myField: { value: 'field', required: true, error: '' },
+      email: {
+        value: 'mail',
+        required: true,
+        error: '',
+        dependsOn: 'myField',
+        validator: {
+          regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+          error: 'invalid email'
+        }
+      }
+    })
+
+    act(() => {
+      result.current.handleChange({ target: { value: 'newValue', name: 'myField' } })
+    })
+
+    expect(result.current.isPristine()).toBeFalsy()
+  })
+
+  it('should indicate that the prefilled form has never been touched by the user', async () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: 'field', required: true, error: '' },
+        email: {
+          value: 'mail',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    result.current.setInitialState({
+      myField: { value: 'field', required: true, error: '' },
+      email: {
+        value: 'mail',
+        required: true,
+        error: '',
+        dependsOn: 'myField',
+        validator: {
+          regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+          error: 'invalid email'
+        }
+      }
+    })
+
+    expect(result.current.isPristine()).toBeTruthy()
+  })
+
   it('should reset the form correctly', () => {
     const { result } = renderHook(() =>
       useForm({
