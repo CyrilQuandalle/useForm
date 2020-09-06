@@ -169,6 +169,66 @@ describe('useForm', () => {
     expect(result.current.isFormEmpty()).toBeTruthy()
   })
 
+  it('shoud indicate the form is not empty', () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: 'k', required: true, error: '' },
+        email: {
+          value: 'o',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    expect(result.current.isFormEmpty()).toBeFalsy()
+  })
+
+  it('shoud indicate that the form does not have its required fields empty', () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: 'k', required: true, error: '' },
+        email: {
+          value: 'o',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    expect(result.current.isFormEmpty(true)).toBeFalsy()
+  })
+
+  it('shoud indicate that the form has its required fields empty', () => {
+    const { result } = renderHook(() =>
+      useForm({
+        myField: { value: '', required: true, error: '' },
+        email: {
+          value: '',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
+        }
+      })
+    )
+
+    expect(result.current.isFormEmpty(true)).toBeTruthy()
+  })
+
   it('should reset the form correctly', () => {
     const { result } = renderHook(() =>
       useForm({
