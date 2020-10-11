@@ -246,18 +246,20 @@ describe('useForm', () => {
       })
     )
 
-    result.current.setInitialState({
-      myField: { value: 'field', required: true, error: '' },
-      email: {
-        value: 'mail',
-        required: true,
-        error: '',
-        dependsOn: 'myField',
-        validator: {
-          regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
-          error: 'invalid email'
+    act(() => {
+      result.current.setInitialState({
+        myField: { value: 'field', required: true, error: '' },
+        email: {
+          value: 'mail',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
         }
-      }
+      })
     })
 
     act(() => {
@@ -284,18 +286,20 @@ describe('useForm', () => {
       })
     )
 
-    result.current.setInitialState({
-      myField: { value: 'field', required: true, error: '' },
-      email: {
-        value: 'mail',
-        required: true,
-        error: '',
-        dependsOn: 'myField',
-        validator: {
-          regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
-          error: 'invalid email'
+    act(() => {
+      result.current.setInitialState({
+        myField: { value: 'field', required: true, error: '' },
+        email: {
+          value: 'mail',
+          required: true,
+          error: '',
+          dependsOn: 'myField',
+          validator: {
+            regEx: /^[a-z0-9]+([|.|-]{1}[a-z0-9]+)*@[a-z0-9]+([|.|-]{1}[a-z0-9]+)*[.]{1}[a-z]{2,6}$/i,
+            error: 'invalid email'
+          }
         }
-      }
+      })
     })
 
     expect(result.current.isPristine()).toBeTruthy()
