@@ -59,6 +59,17 @@ describe('useForm', () => {
       expect(result.current.isFormInerror()).toBeTruthy()
     })
 
+    it('should indicate that the form is not in error', () => {
+      const { result } = renderHook(() =>
+        useForm({ myField: { value: 'test', required: true, error: '' } })
+      )
+      act(() => {
+        result.current.onValidate({ target: { name: 'myField' } })
+      })
+
+      expect(result.current.isFormInerror()).toBeFalsy()
+    })
+
     it('should display a custom error for field with custom validation and wrong value', () => {
       const { result } = renderHook(() =>
         useForm({
@@ -428,6 +439,33 @@ describe('useForm', () => {
 
       expect(result.current.isPristine('form1')).toBeFalsy()
       expect(result.current.isPristine('form2')).toBeTruthy()
+    })
+
+    it('should validate all fields for a specific form', () => {
+      const { result } = renderHook(() =>
+        useForm({
+          form1: { myField: { value: '', required: true }, otherFirld: { value: '' } },
+          form2: { myField: { value: '', required: true } }
+        })
+      )
+
+      act(() => {
+        result.current.validateAllFields('form1')
+      })
+
+      expect(result.current.state.form1.myField.error).toBeTruthy()
+      expect(result.current.state.form2.myField.error).toBeFalsy()
+    })
+
+    it('shoudl indicate if a specific form is in error', () => {
+      const { result } = renderHook(() =>
+        useForm({
+          form1: { myField: { value: '', required: true }, otherFirld: { value: '' } },
+          form2: { myField: { value: '', required: true } }
+        })
+      )
+
+      expect(result.current.isFormInerror('form1')).toBeTruthy()
     })
   })
 })
